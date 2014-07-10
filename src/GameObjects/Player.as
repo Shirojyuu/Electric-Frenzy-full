@@ -36,7 +36,7 @@ package GameObjects
 			initStates();
 			initAnimations();
 			initParams();
-			initPhysics();
+			resetPhysics();
 
 			exhaust = new FlxEmitter(x, y, numParticles);
 			exhaust.setSize(20, 20);
@@ -55,7 +55,7 @@ package GameObjects
 			
 		}
 		
-		private function initPhysics():void 
+		public function resetPhysics():void 
 		{
 			drag.x = 1500;
 			drag.y = 1500;
@@ -72,12 +72,13 @@ package GameObjects
 		
 		private function initAnimations():void 
 		{
-			addAnimation("idle", [0,0,0,0,1,1,1,2,2,1,1,1,1,], 40, true);
+			addAnimation("idle", [0,0,0,0,1,1,1,2,2,1,1,1,1,], 40, false);
 			addAnimation("goUp", [8], 40, false);
 			addAnimation("goDn", [9], 40, false);
 			addAnimation("brake", [10], 40, false);
 			addAnimation("surf", [3,3,3,3,3,3,4,4,5,5,5,5,5,5,5,5,4,4,4,4,4], 40, false);
 			addAnimation("hack", [6, 7, 6, 7, 6, 7 , 6 , 7], 60, true);
+			addAnimation("frenzy", [11,12,13], 60, true);
 			
 		}
 		
@@ -94,6 +95,7 @@ package GameObjects
 			states.push("hack");
 			states.push("teleport");
 			states.push("move");
+			states.push("frenzy");
 			
 			playerState = "idle";
 		}
@@ -108,24 +110,43 @@ package GameObjects
 				
 			exhaust.y = y + 45;
 			
-			
 			if (!controlRestriction)
 			{
 			if (velocity.x == 0 && !FlxG.keys.any())
 			{
-				playerState = "idle";
+				
+				if (playerState != "frenzy")
+				{
+					playerState = "idle";
+				}
+				
+				else if (playerState == "frenzy")
+				{
+					play("frenzy");
+				}
+			}
 			}
 			
 			if (FlxG.keys.justPressed("ENTER"))
 			{
 				play("hack");
 			}
+			
 			//Player Movement
 			if (FlxG.keys.RIGHT)
 			{
 				velocity.x += surfSpeed;
-				play("surf");
-				playerState = "move";
+				
+				if (playerState != "frenzy")
+				{
+					playerState = "move"
+					play("surf");
+				}
+				
+				else if (playerState == "frenzy")
+				{
+					play("frenzy");
+				}
 			}
 			
 			if (FlxG.keys.LEFT)
@@ -133,25 +154,51 @@ package GameObjects
 				if (x > 0)
 				{
 				velocity.x -= surfSpeed;
-				play("brake");
-				playerState = "move";
+				
+				if (playerState != "frenzy")
+				{
+					playerState = "move"
+					play("brake");
+				}
+				
+				else if (playerState == "frenzy")
+				{
+					play("frenzy");
+				}
 				}
 			}
 			
 			if (FlxG.keys.UP)
 			{
 				velocity.y -= surfSpeed;
-				play("goUp");
-				playerState = "move";
+				
+				if (playerState != "frenzy")
+				{
+					playerState = "move"
+					play("goUp");
+				}
+				
+				else if (playerState == "frenzy")
+				{
+					play("frenzy");
+				}
 			}	
 				
 			if (FlxG.keys.DOWN)
 			{
-
+				
 				velocity.y += surfSpeed;
-				play("goDn");
-				playerState = "move";
-			}
+				
+				if (playerState != "frenzy")
+				{
+					playerState = "move"
+					play("goDn");
+				}
+				
+				else if (playerState == "frenzy")
+				{
+					play("frenzy");
+				}
 			}
 			
 			if(playerState == "idle")
@@ -162,6 +209,16 @@ package GameObjects
 			if(playerState == "hack")
 			{
 				play("hack");
+			}
+			
+			if (playerState == "frenzy")
+			{
+				play("frenzy");
+				
+			drag.x = 900;
+			drag.y = 900;
+			surfSpeed = 90;
+			speedCap = new FlxPoint(850, 850);
 			}
 		}
 		

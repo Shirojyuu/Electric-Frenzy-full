@@ -35,9 +35,13 @@ package
 		private var lifeTimer:Timer = new Timer(1000, 0);
 		private var titleCardTimer:Timer = new Timer(1000, 3);
 		private var levelClearTimer:Timer = new Timer(1000, 3);
+		private var frenzyTimer:Timer = new Timer(50, 0);
+		private var refillTimer:Timer = new Timer(5, 200);
 		private var dataKeys:Array = new Array();
 		private var dKC:dataKeyCollect;
 		private var exitPortal:Portal;
+		
+		public var frenSnd:FlxSound;
 		
 		//Groups
 		private var allEnemies:FlxGroup = new FlxGroup();
@@ -61,7 +65,7 @@ package
 		//HUD
 		private var hudLayer:FlxGroup = new FlxGroup();
 		private var healthBar:FlxBar = new FlxBar(0, 30, 1, 210, 10, null, null, 0, 100, true);
-		private var boostBar:FlxBar = new FlxBar(0, 42, 1, 200, 5, null, null, 0, 100, true);
+		private var specialBar:FlxBar = new FlxBar(0, 42, 1, 200, 8, null, null, 0, 50, true);
 		private var titleCard:TitleCard = new TitleCard(Registry.TitleCard_SCS);
 		Registry.statusHUD = new StatusHUD(220, 30, 0);
 		
@@ -78,7 +82,6 @@ package
 			xmlTest.parseXML(dstXML2.toXMLString());
 			
 			FlxG.playMusic(music);
-			
 			levelBG.scrollFactor.x = 0;
 			levelBG.scrollFactor.y = 0;
 			add(levelBG);
@@ -136,11 +139,13 @@ package
 			healthBar.scrollFactor.y = 0;
 			healthBar.color = 0xff00ff00;
 			
+			specialBar.currentValue = 50;
+			specialBar.scrollFactor.x = 0;
+			specialBar.scrollFactor.y = 0;
+			specialBar.color = 0x0088ff;
 			
-			boostBar.scrollFactor.x = 0;
-			boostBar.scrollFactor.y = 0;
-			boostBar.color = 0x0055ff;
-			
+			frenSnd = new FlxSound()
+			frenSnd.loadEmbedded(Registry.FrenzySound);
 			Registry.percentageTxt.scale.x = 2;
 			Registry.percentageTxt.scale.y = 2;
 			Registry.percentageTxt.scrollFactor.x = 0;
@@ -153,7 +158,7 @@ package
 			hudLayer.add(Registry.pureTxt);
 			hudLayer.add(Registry.statusHUD);
 			hudLayer.add(healthBar);
-			hudLayer.add(boostBar);
+			hudLayer.add(specialBar);
 			hudLayer.add(titleCard);
 			add(hudLayer);
 			
@@ -161,6 +166,8 @@ package
 			titleCardTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameStart);
 			lifeTimer.addEventListener(TimerEvent.TIMER, drainLife);
 			levelClearTimer.addEventListener(TimerEvent.TIMER_COMPLETE, switchToTopMenu);
+			frenzyTimer.addEventListener(TimerEvent.TIMER, frenzyDrainLife);
+			refillTimer.addEventListener(TimerEvent.TIMER, frenzyRefill);
 			titleCardTimer.start();
 		}
 		
@@ -208,6 +215,29 @@ package
 				allEnemies.add(enem1new);
 			}
 			
+			if (FlxG.keys.justPressed("F") && specialBar.currentValue > 0)
+			{
+				FlxG.flash(0xffffff, 0.3);
+				player.playerState = "frenzy";
+				frenzyTimer.start();
+				frenSnd.play();
+				
+			}
+			
+			if (FlxG.keys.justPressed("R") && specialBar.currentValue == 0)
+			{
+				refillTimer.start();
+				
+			}
+
+			
+			if (specialBar.currentValue == 0)
+			{
+				frenSnd.stop();
+				frenzyTimer.stop();
+				player.resetPhysics();
+				player.playerState = "idle";
+			}
 			
 			for each(var enem:Enemy1 in enemies)
 			{
@@ -270,8 +300,21 @@ package
 		
 		private function drainLife(event:TimerEvent):void
 		{
-			player.health--;
+			if (player.playerState != "frenzy")
+				player.health--;
 		}
+		
+		private function frenzyDrainLife(event:TimerEvent):void
+		{
+				this.specialBar.currentValue -= 1;
+				player.health -= 1;
+		}
+		
+		private function frenzyRefill(event:TimerEvent):void
+		{
+				this.specialBar.currentValue++;
+		}
+		
 		
 		private function gameStart(event:TimerEvent):void
 		{
@@ -284,6 +327,7 @@ package
 		
 		private function switchToTopMenu(event:TimerEvent):void
 		{
+			FlxG.music.kill();
 			this.destroy();
 			FlxG.switchState(new TopMenu);
 			

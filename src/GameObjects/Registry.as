@@ -14,6 +14,7 @@ package GameObjects
 		[Embed(source = "../sprites/levelClearText.png")] public static var LevelClearText:Class;
 		[Embed(source = "gameSprites/explodeparticle.png")] public static var ExPart:Class;
 		[Embed(source = "../fx/collectKey.mp3")] public static var GetSound:Class;
+		[Embed(source = "../fx/frenzy.mp3")] public static var FrenzySound:Class;
 		
 		//Title Cards
 		[Embed(source = "../sprites/SCS Title Card.png")] public static var TitleCard_SCS:Class;
@@ -27,6 +28,7 @@ package GameObjects
 		public static var level:FlxTilemap;
 		public static var statusHUD:StatusHUD;
 		private static var singleton:Registry = null;
+		private static var frenzySoundFX:FlxSound = new FlxSound();
 		public function Registry() 
 		{
 		}
