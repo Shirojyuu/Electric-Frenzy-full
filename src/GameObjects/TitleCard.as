@@ -11,7 +11,7 @@ package GameObjects
 		
 		public function TitleCard(cardPic:Class) 
 		{
-			super(0, 225, cardPic);
+			super(0, 0, cardPic);
 		}
 		
 	}

@@ -9,12 +9,16 @@ package GameObjects
 	{
 		//Soundset
 		
-		[Embed(source = "../sprites/mapCSV_Group1_Map1.csv", mimeType = "application/octet-stream")] public static var LvlSak:Class;
+		[Embed(source = "../sprites/mapCSV_SAKCS_LVMap.csv", mimeType = "application/octet-stream")] public static var LvlSak:Class;
 		[Embed(source = "../sprites/SCS tiles.png")] public static var Tileset:Class;
 		[Embed(source = "../sprites/levelClearText.png")] public static var LevelClearText:Class;
 		[Embed(source = "gameSprites/explodeparticle.png")] public static var ExPart:Class;
 		[Embed(source = "../fx/collectKey.mp3")] public static var GetSound:Class;
 		[Embed(source = "../fx/frenzy.mp3")] public static var FrenzySound:Class;
+		[Embed(source = "../fx/damaged.mp3")] public static var DamagedSound:Class;
+		[Embed(source = "../fx/hack.mp3")] public static var HackSound:Class;
+		[Embed(source = "../fx/killEnemy.mp3")] public static var KillSound:Class;
+		[Embed(source = "../fx/portal.mp3")] public static var PortalSound:Class;
 		
 		//Title Cards
 		[Embed(source = "../sprites/SCS Title Card.png")] public static var TitleCard_SCS:Class;

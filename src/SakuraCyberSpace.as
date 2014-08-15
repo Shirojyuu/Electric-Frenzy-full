@@ -1,11 +1,11 @@
 package  
 {
+	import adobe.utils.CustomActions;
 	import flash.accessibility.Accessibility;
 	import flash.events.TimerEvent;
 	import flash.xml.XMLDocument;
 	import flash.xml.XMLNode;
 	import GameObjects.*;
-	import GameObjects.Enemy1;
 	import GameObjects.dataKeyCollect;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
@@ -43,6 +43,8 @@ package
 		
 		public var frenSnd:FlxSound;
 		
+		//Enemy Counts
+		private var stageCorruption:int = 0;
 		//Groups
 		private var allEnemies:FlxGroup = new FlxGroup();
 		private var allKeys:FlxGroup = new FlxGroup();
@@ -53,7 +55,7 @@ package
 		public var srcXML:FlxXML = new FlxXML();
 		public var dstXML2:XML;
 		public var xmlTest:XMLDocument;
-		[Embed(source = "XMLUtilities/Level_SCS.xml", mimeType = "application/octet-stream")] public var levelXML:Class;
+		[Embed(source = "XMLUtilities/Level_SCSFinal.xml", mimeType = "application/octet-stream")] public var levelXML:Class;
 		
 		//Beauty Objects
 		private var levelBG:FlxSprite = new FlxSprite(0, 0, scsBG);
@@ -121,6 +123,7 @@ package
 			
 			var endingPosition:XMLNode = xmlTest.lastChild.lastChild.firstChild;
 			exitPortal = new Portal(endingPosition.attributes.x, endingPosition.attributes.y);
+			exitPortal.immovable = true;
 			add(exitPortal);
 			
 			dstXML2 = srcXML.loadEmbedded(levelXML);
@@ -130,6 +133,9 @@ package
 			
 			allKeys = parseKeys(xmlTest.firstChild.firstChild);
 			totalKeysInStage = xmlTest.firstChild.firstChild.childNodes.length;
+			
+			var enemiesNodePath:XMLNode = xmlTest.firstChild.childNodes[1];
+			allEnemies = parseEnemies(enemiesNodePath);
 			
 			add(allKeys);
 			add(allEnemies);
@@ -153,6 +159,8 @@ package
 			Registry.percentageTxt.shadow = 3;
 			Registry.statusHUD.scrollFactor.x = 0;
 			Registry.statusHUD.scrollFactor.y = 0;
+			titleCard.scrollFactor.x = 0;
+			titleCard.scrollFactor.y = 0;
 			hudLayer.add(Registry.percentageTxt);
 			hudLayer.add(Registry.enerTxt);
 			hudLayer.add(Registry.pureTxt);
@@ -165,7 +173,7 @@ package
 
 			titleCardTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameStart);
 			lifeTimer.addEventListener(TimerEvent.TIMER, drainLife);
-			levelClearTimer.addEventListener(TimerEvent.TIMER_COMPLETE, switchToTopMenu);
+			levelClearTimer.addEventListener(TimerEvent.TIMER_COMPLETE, switchToThanks);
 			frenzyTimer.addEventListener(TimerEvent.TIMER, frenzyDrainLife);
 			refillTimer.addEventListener(TimerEvent.TIMER, frenzyRefill);
 			titleCardTimer.start();
@@ -192,6 +200,34 @@ package
             keys.add(item);
 		}
 		
+		public function parseEnemies(node:XMLNode):FlxGroup
+		{
+			var enemies:FlxGroup = new FlxGroup();
+
+			var kids:Array = node.childNodes;
+			for each(var item:XMLNode in kids)
+			{
+				parseEnemy(item, enemies);
+			}
+			
+            return enemies;
+		}
+		
+		
+		public function parseEnemy(node:XMLNode, enemies:FlxGroup):void
+		{
+			if (node.attributes.type == "malware")
+			{
+				var item:EnemyMalware = new EnemyMalware(0, 0);
+				item.x = node.attributes.x;
+				item.y = node.attributes.y;
+				trace(item.x);
+				
+			}
+				enemies.add(item);
+				//item.moveToTarget(player);
+		}
+		
 		override public function update():void
 		{
 			FlxG.camera.setBounds(0, 0, Registry.level.width, Registry.level.height, true);
@@ -199,7 +235,7 @@ package
 			FlxG.camera.follow(player, FlxCamera.STYLE_LOCKON);
 			
 			healthBar.currentValue = player.health;
-			Registry.percentage = (Registry.collectedKeys / totalKeysInStage)*100;
+			Registry.percentage = (Registry.collectedKeys / totalKeysInStage)*100 - stageCorruption;
 			Registry.percentageTxt.text = Registry.percentage.toString() + "%";
 			
 			super.update();
@@ -207,13 +243,6 @@ package
 			
 			if(gameStarted)
 			{
-			//Runtime Object Generation
-			if (FlxG.keys.justPressed("E"))
-			{
-				var enem1new:Enemy1 = new Enemy1(player.x + Math.random() * 500 + 450, Math.random() * 400 + 200);
-				enemies.push(enem1new);
-				allEnemies.add(enem1new);
-			}
 			
 			if (FlxG.keys.justPressed("F") && specialBar.currentValue > 0)
 			{
@@ -239,23 +268,14 @@ package
 				player.playerState = "idle";
 			}
 			
-			for each(var enem:Enemy1 in enemies)
-			{
-				if (enem.x <= FlxG.camera.x)
-				enemies.pop();
-			}
-			
 			Registry.statusHUD.statusID = player.playerStatus;
 
 			//Collision and Overlaps
 			FlxG.overlap(player, allKeys, obtainDataKey);
-			
-			
 			FlxG.collide(player, Registry.level, buzz);
+			FlxG.collide(player, allEnemies, damageCheck);
+			FlxG.collide(player, exitPortal, touchPortal);
 
-			if(player.playerState != "attack")
-				FlxG.overlap(player, allEnemies, gotDamaged);
-			
 			}
 			
 			if (Registry.collectedKeys == totalKeysInStage && !stageClear)
@@ -275,15 +295,28 @@ package
 			Registry.collectedKeys += 1;
 			
 			if(player.health < 100)
-				player.health += 2;
+				player.health += 1;
 		}
 		
-		public function gotDamaged(obj:Player, enem:Enemy1):void
+		public function damageCheck(obj:Player, enem:EnemyMalware):void
 		{
+			if (!player.attacking)
+			{
+			FlxG.play(Registry.DamagedSound);
 			enem.kill();
 			player.velocity.x = -140;
 			player.health -= 10;
-			FlxG.camera.shake(0.01, 0.2);
+			FlxG.camera.shake(0.01, 1);
+			stageCorruption += 3;
+			}
+			
+			if (player.attacking)
+			{
+			FlxG.play(Registry.KillSound);
+			enem.kill();
+			stageCorruption -= 1;
+			player.attacking = false;
+			}
 		}
 		public function buzz(obj:Player, enem:FlxTilemap):void
 		{
@@ -295,13 +328,13 @@ package
 			//	Important! Clear out the plugin, otherwise resources will get messed right up after a while
 			FlxSpecialFX.clear();
 			
-			super.destroy();
+			super.recycle();
 		}
 		
 		private function drainLife(event:TimerEvent):void
 		{
 			if (player.playerState != "frenzy")
-				player.health--;
+				player.health-= 2;
 		}
 		
 		private function frenzyDrainLife(event:TimerEvent):void
@@ -325,12 +358,20 @@ package
 			
 		}
 		
-		private function switchToTopMenu(event:TimerEvent):void
+		private function switchToThanks(event:TimerEvent):void
 		{
 			FlxG.music.kill();
 			this.destroy();
-			FlxG.switchState(new TopMenu);
+			FlxG.switchState(new ThanksForPlaying);
 			
+		}
+		
+		private function touchPortal(a:Player, b:Portal):void
+		{
+			a.visible = false;
+			FlxG.play(Registry.PortalSound);
+			FlxG.music.stop();
+			endLevelAsClear();
 		}
 		
 		private function endLevelAsClear():void

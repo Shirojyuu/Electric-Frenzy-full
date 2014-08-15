@@ -118,8 +118,12 @@
 		<dataKeyCollect x="510" y="930"/>
 		<dataKeyCollect x="570" y="870"/>
 	</objects>
+	<enemies>
+		<EnemMalware x="810" y="240" type="malware"/>
+	</enemies>
 	<startpos>
 		<Avatar x="2490" y="510"/>
 		<position x="140" y="420"/>
 	</startpos>
+	
 </level>

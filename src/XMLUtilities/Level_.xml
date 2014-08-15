@@ -613,5 +613,6 @@
 		<dataKeyCollect x="150" y="1230"/>
 		<dataKeyCollect x="510" y="930"/>
 		<dataKeyCollect x="570" y="870"/>
+		<EnemMalware x="810" y="240"/>
 	</objects>
 </level>

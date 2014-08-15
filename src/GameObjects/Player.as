@@ -1,16 +1,19 @@
 package GameObjects 
 {
 
+	import flash.events.TimerEvent;
 	import org.flixel.*;
 	/**
 	 * ...
 	 * @author Alec Day
 	 */
 	import GameObjects.Registry;
+	import flash.utils.Timer;
 	public class Player extends FlxSprite
 	{
 		[Embed(source = "gameSprites/Plug SS6.png")] public var playerGFX:Class;
 		[Embed(source = "gameSprites/trail.png")] private static var Part:Class;
+		public var hackTimer:Timer = new Timer(500, 2);
 		
 		public var exhaust:FlxEmitter;
 		public var numParticles:int = 10;
@@ -21,6 +24,8 @@ package GameObjects
 		public var playerState:String = new String();
 		public var playerStatus:int;
 		public var controlRestriction:Boolean = false;
+		public var attacking:Boolean = false;
+		private var hackPath:FlxPath;
 		
 		public static const STAT_OK:int = 0;
 		public static const STAT_POI:int = 1;
@@ -57,9 +62,10 @@ package GameObjects
 		
 		public function resetPhysics():void 
 		{
-			drag.x = 1500;
-			drag.y = 1500;
+			drag.x = 1100;
+			drag.y = 1200;
 			surfSpeed = 35;
+			
 			speedCap = new FlxPoint(800, 800);
 		}
 		
@@ -98,6 +104,9 @@ package GameObjects
 			states.push("frenzy");
 			
 			playerState = "idle";
+			hackTimer.addEventListener(TimerEvent.TIMER_COMPLETE,attackFlagReset);
+			
+			
 		}
 		
 		override public function update():void
@@ -112,10 +121,17 @@ package GameObjects
 			
 			if (!controlRestriction)
 			{
+			
+			if (FlxG.keys.justPressed("X"))
+			{
+				playerState = "hack";
+				hackAttack();
+			}
+			
 			if (velocity.x == 0 && !FlxG.keys.any())
 			{
 				
-				if (playerState != "frenzy")
+				if (playerState != "frenzy" || playerState != "hack")
 				{
 					playerState = "idle";
 				}
@@ -137,7 +153,7 @@ package GameObjects
 			{
 				velocity.x += surfSpeed;
 				
-				if (playerState != "frenzy")
+				if (playerState != "frenzy" || playerState != "hack")
 				{
 					playerState = "move"
 					play("surf");
@@ -155,7 +171,7 @@ package GameObjects
 				{
 				velocity.x -= surfSpeed;
 				
-				if (playerState != "frenzy")
+				if (playerState != "frenzy" || playerState != "hack")
 				{
 					playerState = "move"
 					play("brake");
@@ -172,7 +188,7 @@ package GameObjects
 			{
 				velocity.y -= surfSpeed;
 				
-				if (playerState != "frenzy")
+				if (playerState != "frenzy" || playerState != "hack")
 				{
 					playerState = "move"
 					play("goUp");
@@ -189,7 +205,7 @@ package GameObjects
 				
 				velocity.y += surfSpeed;
 				
-				if (playerState != "frenzy")
+				if (playerState != "frenzy" || playerState != "hack" )
 				{
 					playerState = "move"
 					play("goDn");
@@ -214,7 +230,8 @@ package GameObjects
 			if (playerState == "frenzy")
 			{
 				play("frenzy");
-				
+			
+			attacking = true;
 			drag.x = 900;
 			drag.y = 900;
 			surfSpeed = 90;
@@ -222,6 +239,24 @@ package GameObjects
 			}
 		}
 		
+		public function hackAttack():void
+		{
+			hackTimer.start();
+			FlxG.play(Registry.HackSound);
+			attacking = true;
+			play("hack", true);
+			hackPath = new FlxPath();
+			hackPath.addPoint(new FlxPoint(x, y), false);
+			hackPath.addPoint(new FlxPoint(x + 30, y), false);
+			followPath(hackPath, 800, PATH_HORIZONTAL_ONLY, false);
+			
+		}
+		
+		public function attackFlagReset(e:TimerEvent):void
+		{
+			attacking = false;
+			playerState = "idle";
+		}
 	}
 
 }
