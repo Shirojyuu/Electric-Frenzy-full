@@ -397,6 +397,33 @@ package
 			levelClearTimer.start();
 			add(levelCT);
 			
+			if (Registry.percentage <= 20)
+			{
+				Registry.levelRankNumber = 0;
+			}
+			
+			if (Registry.percentage > 20 && Registry.percentage <= 50)
+			{
+				Registry.levelRankNumber = 1;
+			}
+			
+			if (Registry.percentage > 50 && Registry.percentage <= 70)
+			{
+				Registry.levelRankNumber = 2;
+			}
+			
+			
+			if (Registry.percentage > 70 && Registry.percentage <= 90)
+			{
+				Registry.levelRankNumber = 3;
+			}
+			
+			
+			if (Registry.percentage > 90 && Registry.percentage <= 100)
+			{
+				Registry.levelRankNumber = 4;
+			}
+			
 		}
 		
 	}

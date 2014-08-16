@@ -33,6 +33,8 @@ package GameObjects
 		public static var statusHUD:StatusHUD;
 		private static var singleton:Registry = null;
 		private static var frenzySoundFX:FlxSound = new FlxSound();
+		
+		public static var levelRankNumber:uint = 0;
 		public function Registry() 
 		{
 		}

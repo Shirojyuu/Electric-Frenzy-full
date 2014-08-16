@@ -1,8 +1,10 @@
 package  
 {
+	import GameObjects.RankImage;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxState;
 	import org.flixel.FlxG;
+	import GameObjects.Registry;
 	/**
 	 * ...
 	 * @author Alec Day
@@ -14,7 +16,9 @@ package
 		{
 			
 			var picture:FlxSprite = new FlxSprite(0, 0, thanksPic);
+			var rank:RankImage = new RankImage(0, 400, Registry.levelRankNumber);
 			add(picture);
+			add(rank);
 		}
 		
 		override public function create():void
