@@ -1,5 +1,7 @@
 <level>
+	<!---- Entry 0 in the XML Nodes Array-->
 	<objects>
+	
 		<dataKeyCollect x="360" y="930"/>
 		<dataKeyCollect x="390" y="930"/>
 		<dataKeyCollect x="450" y="930"/>
@@ -309,28 +311,29 @@
 		<dataKeyCollect x="4470" y="810"/>
 		<dataKeyCollect x="4500" y="810"/>
 	</objects>
+	<!---- Entry 1 in the XML Nodes Array-->
 	<enemies>
-		<EnemMalware x="4290" y="150"/>
-		<EnemMalware x="4290" y="270"/>
-		<EnemMalware x="5400" y="480"/>
-		<EnemMalware x="5400" y="630"/>
-		<EnemMalware x="5400" y="780"/>
-		<EnemMalware x="4080" y="840"/>
-		<EnemMalware x="3870" y="840"/>
-		<EnemMalware x="3660" y="840"/>
-		<EnemMalware x="2940" y="720"/>
-		<EnemMalware x="2280" y="720"/>
-		<EnemMalware x="1140" y="120"/>
-		<EnemMalware x="1350" y="180"/>
-		<EnemMalware x="1140" y="270"/>
-		<EnemMalware x="3030" y="1260"/>
-		<EnemMalware x="2430" y="1290"/>
-		<EnemMalware x="930" y="1050"/>
-		<EnemMalware x="720" y="1290"/>
+		<EnemMalware x="4290" y="150" type = "malware"/>
+		<EnemMalware x="4290" y="270" type = "malware"/>
+		<EnemMalware x="5400" y="480" type = "malware"/>
+		<EnemMalware x="5400" y="630" type = "malware"/>
+		<EnemMalware x="5400" y="780" type = "malware"/>
+		<EnemMalware x="4080" y="840" type = "malware"/>
+		<EnemMalware x="3870" y="840" type = "malware"/>
+		<EnemMalware x="3660" y="840" type = "malware"/>
+		<EnemMalware x="2940" y="720" type = "malware"/>
+		<EnemMalware x="2280" y="720" type = "malware"/>
+		<EnemMalware x="1140" y="120" type = "malware"/>
+		<EnemMalware x="1350" y="180" type = "malware"/>
+		<EnemMalware x="1140" y="270" type = "malware"/>
+		<EnemMalware x="3030" y="1260"type = "malware"/>
+		<EnemMalware x="2430" y="1290"type = "malware"/>
+		<EnemMalware x="930" y="1050" type = "malware"/>
+		<EnemMalware x="720" y="1290" type = "malware"/>
 	</enemies>
+	<!---- Entry 2 in the XML Nodes Array-->
 	<startpos>
 		<Avatar x="7170" y="420"/>
 		<position x="230" y="1000"/>	
 	</startpos>
-
 </level>

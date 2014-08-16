@@ -238,11 +238,25 @@ package
 			Registry.percentage = (Registry.collectedKeys / totalKeysInStage)*100 - stageCorruption;
 			Registry.percentageTxt.text = Registry.percentage.toString() + "%";
 			
+			if (Registry.percentage < 0)
+			{
+				Registry.percentageTxt.color = 0xffff0000;
+			}
+			
+			if (Registry.percentage >= 0)
+			{
+				Registry.percentageTxt.color = 0xffffffff;
+			}
 			super.update();
 			
 			
 			if(gameStarted)
 			{
+			
+			if (player.playerDead)
+			{
+				FlxG.resetState();
+			}
 			
 			if (FlxG.keys.justPressed("F") && specialBar.currentValue > 0)
 			{

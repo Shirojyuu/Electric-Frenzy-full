@@ -16,6 +16,7 @@ package GameObjects
 		public var hackTimer:Timer = new Timer(500, 2);
 		
 		public var exhaust:FlxEmitter;
+		public var explosion:FlxEmitter;
 		public var numParticles:int = 10;
 		
 		public var surfSpeed:int;
@@ -26,6 +27,9 @@ package GameObjects
 		public var controlRestriction:Boolean = false;
 		public var attacking:Boolean = false;
 		private var hackPath:FlxPath;
+		public var deathFlag:Boolean = false;
+		public var playerDead:Boolean = false;
+		
 		
 		public static const STAT_OK:int = 0;
 		public static const STAT_POI:int = 1;
@@ -44,10 +48,21 @@ package GameObjects
 			resetPhysics();
 
 			exhaust = new FlxEmitter(x, y, numParticles);
+			explosion = new FlxEmitter(x, y, 100);
+			explosion.visible = false;
 			exhaust.setSize(20, 20);
 			exhaust.setXSpeed(-3, 3);
 			exhaust.setYSpeed(0, 0);
 			exhaust.lifespan = 0.1;
+			
+			
+			for (var c:int = 0; c < 100; c++)
+			{	
+				var explo_particle:FlxParticle = new FlxParticle()
+				explo_particle.loadGraphic(Part);
+				explo_particle.blend = "add";
+				explosion.add(explo_particle);
+			}
 			
 			for (var b:int = 0; b < numParticles; b++)
 			{	
@@ -237,6 +252,14 @@ package GameObjects
 			surfSpeed = 90;
 			speedCap = new FlxPoint(850, 850);
 			}
+			
+			if (health <= 0 && !deathFlag)
+			{
+				FlxG.music.stop();
+				FlxG.play(Registry.KillSound);
+				deathFlag = true;
+				kill();
+			}
 		}
 		
 		public function hackAttack():void
@@ -256,6 +279,25 @@ package GameObjects
 		{
 			attacking = false;
 			playerState = "idle";
+		}
+		
+		override public function kill():void
+		{
+			exhaust.visible = false;
+			explosion.x = x;
+			explosion.y = y;
+			explosion.setXSpeed(-400, 400);
+			explosion.setYSpeed(-400, 400);
+			explosion.start(true, 2, 0.1, 0);
+			
+			FlxG.flash(0xffffffff, 3, deathScenarioEnd);
+			alive = false;
+			exists = false;
+		}
+		
+		public function deathScenarioEnd():void
+		{
+			playerDead = true;
 		}
 	}
 

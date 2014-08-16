@@ -12,7 +12,7 @@ package
 	{
 		public function Main():void
 		{
-		super(640, 480, TopMenu, 1, 60, 60, true);
+		super(640, 480, SplashScreen, 1, 60, 60, true);
 		forceDebugger = true;
 		}
 	}

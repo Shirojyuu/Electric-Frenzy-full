@@ -13,13 +13,17 @@ package
 	{
 		[Embed(source = "sprites/MainMenu.png")] public static var MenuPic:Class;
 		[Embed(source = "sprites/MenuItems.png")] public static var MenuItems:Class;
+		[Embed(source = "sprites/HelpScreen.png")] public static var HelpScreen:Class;
+		[Embed(source = "music/TRK_CFS.mp3")] public static var MenuMusic:Class;
 		[Embed(source = "fx/select.mp3")] public static var Select:Class;
 		[Embed(source = "fx/scrollMenu.mp3")] public static var Scroll:Class;
 		
 		private var playGameButton:FlxExtendedSprite;
 		private var optionsButton:FlxExtendedSprite;
 		private var exitButton:FlxExtendedSprite;
-		
+		private var helpDisplay:FlxSprite = new FlxSprite(120, 80, HelpScreen);
+		private var creatorNameText:FlxText = new FlxText(0, 0, 200, "2014 Alec Day");
+		private var nowPlayingText:FlxText = new FlxText(0, 30, 800, "Now Playing: Cyber Folk Song - Stage Select Theme - Alec Day");
 		private var menuCounter:int = 0;
 		public function TopMenu() 
 		{
@@ -57,15 +61,27 @@ package
 			
 			playGameButton.mouseReleasedCallback = gameStart;
 			exitButton.mouseReleasedCallback = exit;
-			optionsButton.mouseReleasedCallback = null;
+			optionsButton.mouseReleasedCallback = help;
 			
 			add(bg);
 			add(playGameButton);
 			add(optionsButton);
 			add(exitButton);
 			
+			creatorNameText.size = 20;
+			add(creatorNameText);
+			add(nowPlayingText);
+			
+			helpDisplay.visible = false;
+			add(helpDisplay);
+			
+			
 		}
 		
+		override public function create():void
+		{
+			FlxG.playMusic(MenuMusic);
+		}
 		override public function update():void
 		{
 			super.update();
@@ -117,19 +133,33 @@ package
 						gameStart(null, 0, 0);
 						break;
 						
+					case 1:
+						help(null, 0, 0);
+						break;
+						
 					case 2:
 						exit(null, 0, 0);
 						break;
 				}
+			}
+			
+			if (helpDisplay.visible && FlxG.keys.justPressed("CONTROL"))
+			{
+				helpDisplay.visible = false;
 			}
 		}
 		
 		public function gameStart(a:FlxExtendedSprite,b:uint,c:uint):void
 		{
 			
-			FlxG.fade(0xff000000, 1);
+			FlxG.fade(0xff000000, 1, levelStart);
 			
-			FlxG.switchState(new SakuraCyberSpace);
+			
+		}
+		
+		public function help(a:FlxExtendedSprite, b:uint, c:uint):void
+		{
+			helpDisplay.visible = true;
 		}
 		
 		public function exit(a:FlxExtendedSprite,b:uint,c:uint):void
@@ -137,6 +167,11 @@ package
 			FlxG.fade(0xff000000, 1);
 			
 			System.exit(0);
+		}
+		
+		public function levelStart():void
+		{
+			FlxG.switchState(new SakuraCyberSpace);
 		}
 	}
 
