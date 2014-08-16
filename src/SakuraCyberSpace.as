@@ -292,11 +292,6 @@ package
 
 			}
 			
-			if (Registry.collectedKeys == totalKeysInStage && !stageClear)
-			{
-				FlxG.flash(0xffffff, 1, endLevelAsClear, false);
-				stageClear = true;
-			}
 		}
 		
 		public function obtainDataKey(plr:Player, key:FlxBasic):void

@@ -293,6 +293,8 @@ package GameObjects
 			FlxG.flash(0xffffffff, 3, deathScenarioEnd);
 			alive = false;
 			exists = false;
+			
+			Registry.percentage = 0;
 		}
 		
 		public function deathScenarioEnd():void
