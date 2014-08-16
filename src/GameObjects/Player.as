@@ -283,6 +283,7 @@ package GameObjects
 		
 		override public function kill():void
 		{
+			
 			exhaust.visible = false;
 			explosion.x = x;
 			explosion.y = y;
@@ -294,7 +295,6 @@ package GameObjects
 			alive = false;
 			exists = false;
 			
-			Registry.percentage = 0;
 		}
 		
 		public function deathScenarioEnd():void

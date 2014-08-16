@@ -235,6 +235,7 @@ package
 			FlxG.camera.follow(player, FlxCamera.STYLE_LOCKON);
 			
 			healthBar.currentValue = player.health;
+			
 			Registry.percentage = (Registry.collectedKeys / totalKeysInStage)*100 - stageCorruption;
 			Registry.percentageTxt.text = Registry.percentage.toString() + "%";
 			
@@ -338,6 +339,7 @@ package
 			FlxSpecialFX.clear();
 			
 			super.recycle();
+			Registry.collectedKeys = 0;
 		}
 		
 		private function drainLife(event:TimerEvent):void
