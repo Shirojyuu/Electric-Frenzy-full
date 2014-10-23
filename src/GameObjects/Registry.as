@@ -29,7 +29,7 @@ package GameObjects
 		public static var collectedKeys:int = 0;
 		public static var percentageTxt:FlxText = new FlxText(560, 0, 40, "", false);
 		public static var explosion:ExplodeFX;
-		public static var level:FlxTilemap;
+		public static var level:FlxTilemapExt;
 		public static var statusHUD:StatusHUD;
 		private static var singleton:Registry = null;
 		private static var frenzySoundFX:FlxSound = new FlxSound();

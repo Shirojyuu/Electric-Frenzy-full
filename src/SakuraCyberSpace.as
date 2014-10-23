@@ -87,10 +87,15 @@ package
 			levelBG.scrollFactor.x = 0;
 			levelBG.scrollFactor.y = 0;
 			add(levelBG);
-			Registry.level = new FlxTilemap();
+			Registry.level = new FlxTilemapExt();
 			Registry.level.loadMap(new Registry.LvlSak, Registry.Tileset, 45, 45);
 			
-
+			var slopesFloorLeft:Array = new Array(1,14);
+			var slopesFloorRight:Array = new Array(3,16);
+			var slopesCeilLeft:Array = new Array(15);
+			var slopesCeilRight:Array = new Array(17);
+			
+			Registry.level.setSlopes(slopesFloorLeft,slopesFloorRight);
 			//Special FX
 			if (FlxG.getPlugin(FlxSpecialFX) == null)
 			{
@@ -177,6 +182,9 @@ package
 			frenzyTimer.addEventListener(TimerEvent.TIMER, frenzyDrainLife);
 			refillTimer.addEventListener(TimerEvent.TIMER, frenzyRefill);
 			titleCardTimer.start();
+			
+			FlxG.resetCameras(new FlxCamera(0, 0, 640, 480));
+
 		}
 		
 		public function parseKeys(node:XMLNode):FlxGroup
@@ -287,7 +295,7 @@ package
 
 			//Collision and Overlaps
 			FlxG.overlap(player, allKeys, obtainDataKey);
-			FlxG.collide(player, Registry.level, buzz);
+			FlxG.collide(player, Registry.level);
 			FlxG.collide(player, allEnemies, damageCheck);
 			FlxG.collide(player, exitPortal, touchPortal);
 
@@ -328,7 +336,7 @@ package
 			player.attacking = false;
 			}
 		}
-		public function buzz(obj:Player, enem:FlxTilemap):void
+		public function buzz(obj:Player, enem:FlxTilemapExt):void
 		{
 			FlxG.camera.shake(0.01, 0.01);
 		}
